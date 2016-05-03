@@ -2,7 +2,7 @@
 
 Make automated foreman configuration as easy as pie.
 
-This library automatically resolves names so you can link templates, hosts, domains with only using their names. It's not required to know their ids beforehand.
+This script automatically resolves names so you can link templates, hosts, domains with only using their names. It's not required to know their ids beforehand.
 
 ## Installation
 ```
@@ -21,7 +21,7 @@ foreman-yml /path/to/config.yaml
 
 ### Configuration
 
-Root node of YAML is allways `foreman`.
+Root node of YAML is always `foreman`.
 You can find an configuration example under `config/example.yml`
 
 
