@@ -309,4 +309,4 @@ pip install -e .
 - Better documentaion
 
 ## License
-GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+GNU GENERAL PUBLIC LICENSE Version 3
