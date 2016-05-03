@@ -1,6 +1,6 @@
 # foreman-yml
 
-Configure Foreman with YAML files.
+Make automated foreman configuration as easy as pie.
 
 This library automatically resolves names so you can link templates, hosts, domains with only using their names. It's not required to know their ids beforehand.
 
