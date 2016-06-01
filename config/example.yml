@@ -8,6 +8,11 @@ foreman:
   cleanup-architecture:
     - name: i386
 
+  cleanup-compute-profile:
+    - name: 1-Small
+    - name: 2-Medium
+    - name: 3-Large
+
   cleanup-medium:
     - name: CentOS mirror
     - name: CoreOS mirror
