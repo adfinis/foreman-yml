@@ -599,15 +599,16 @@ class foreman:
                 os_obj = self.fm.operatingsystems.create(operatingsystem=os_tpl)
 
                 #  host_params
-                for name,value in operatingsystem['parameters'].iteritems():
-                    p = {
-                        'name':     name,
-                        'value':    value
-                    }
-                    try:
-                        self.fm.operatingsystems.parameters_create(os_obj['id'], p )
-                    except:
-                        log.log(log.LOG_WARN, "Error adding host parameter '{0}'".format(name))
+                if operatingsystem['parameters']:
+                    for name,value in operatingsystem['parameters'].iteritems():
+                        p = {
+                            'name':     name,
+                            'value':    value
+                        }
+                        try:
+                            self.fm.operatingsystems.parameters_create(os_obj['id'], p )
+                        except:
+                            log.log(log.LOG_WARN, "Error adding host parameter '{0}'".format(name))
 
 
     def process_config_provisioningtpl(self):
