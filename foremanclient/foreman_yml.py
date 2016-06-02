@@ -25,6 +25,9 @@ def main():
     # cleanup architecture
     fm.process_cleanup_arch()
 
+    # cleanup compute profiles
+    fm.process_cleanup_computeprfl()
+
     # cleanup medium
     fm.process_cleanup_medium()
 
