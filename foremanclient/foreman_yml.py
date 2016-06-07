@@ -76,6 +76,14 @@ def main():
     # host
     fm.process_config_host()
 
+    # enterprise edition only: ldap
+    fm.process_auth_sources_ldap()
+
+    # user groups
+    fm.process_usergroups()
+
+    # roles
+    fm.process_roles()
 
 
 

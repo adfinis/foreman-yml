@@ -504,3 +504,40 @@ foreman:
       partition-table: Ubuntu Default
       subnet: lab
       domain: lab.local
+
+  roles:
+    - name: fooo
+    - name: bar
+
+  auth-source-ldap:
+    - name: ldap-is-not-web-scale
+      host: 10.9.5.118
+      port: 7389
+      account: uid=bindtest,cn=users,dc=test,dc=adfinis-sygroup,dc=noexit
+      account-password: schmetterling42
+      base-dn: dc=test,dc=adfinis-sygroup,dc=noexit
+      attr-login: uid
+      attr-firstname: firstName
+      attr-lastname: lastName
+      attr-mail: mail
+      attr-photo: picture
+      onthefly-register: false
+      usergroup-sync: false
+      tls: false
+      groups-base: cn=groups,dc=test,dc=adfinis-sygroup,dc=noexit
+      ldap-filter:
+      server-type: posix
+
+  usergroups:
+    - name: api-testgroup
+    - name: api-test2
+      users:
+        - name: foo
+        - name: burlson
+      groups:
+        - name: api-testgroup
+      ext-usergroups:
+        - name: foremangroup
+          auth-source-ldap: ldap-is-not-web-scale
+      roles:
+        - name: foo

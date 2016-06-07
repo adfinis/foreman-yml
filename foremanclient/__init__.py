@@ -162,6 +162,43 @@ class validator:
             Required('name'):                           All(str)
         })
 
+        self.role = Schema({
+            Required('name'):                           All(str)
+        })
+
+        self.usergroup = Schema({
+            Required('name'):                           All(str),
+            Optional('users'):                          Any(list, None),
+            Optional('groups'):                         Any(list, None),
+            Optional('ext-usergroups'):                 Any(list, None),
+            Optional('roles'):                          Any(list, None)
+        })
+
+        self.auth_source_ldaps = Schema({
+            Required('name'):                           All(str),
+            Required('host'):                           All(str),
+            Optional('port'):                           Any(int, str, None),
+            Optional('account'):                        Any(str, None),
+            Optional('account-password'):               Any(str, None),
+            Optional('base-dn'):                        Any(str, None),
+            Optional('attr-login'):                     Any(str, None),
+            Optional('attr-firstname'):                 Any(str, None),
+            Optional('attr-lastname'):                  Any(str, None),
+            Optional('attr-mail'):                      Any(str, None),
+            Optional('attr-photo'):                     Any(str, None),
+            Optional('onthefly-register'):              Any(bool, int, None),
+            Optional('usergroup-sync'):                 Any(bool, int, None),
+            Optional('tls'):                            Any(bool, int, None),
+            Optional('groups-base'):                    Any(str, None),
+            Optional('ldap-filter'):                    Any(str, None),
+            Optional('server-type'):                    Any( 'free_ipa',
+                                                             'active_directory',
+                                                             'posix',
+                                                              None
+                                                        )
+        })
+
+
 
 
 class foreman:
@@ -942,6 +979,143 @@ class foreman:
                 except:
                     log.log(log.LOG_DEBUG, "An Error Occured when linking Host '{0}' (non-fatal)".format(hostc['name']))
 
+    # roles
+    def process_roles(self):
+        log.log(log.LOG_INFO, "Processing roles")
+        for role in self.get_config_section('roles'):
+            # validate yaml
+            try:
+                self.validator.role(role)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create role '{0}': YAML validation Error: {1}".format(role['name'], e))
+                continue
+
+            try:
+                rl_id   = self.fm.roles.show(role['name'])['id']
+                log.log(log.LOG_WARN, "Role {0} allready exists".format(role['name']))
+                continue
+            except TypeError:
+                pass
+
+            log.log(log.LOG_INFO, "Creating role {0}".format(role['name']))
+            try:
+                self.fm.roles.create( role=role )
+            except:
+                log.log(log.LOG_ERROR, "Something went wrong creating role {0}".format(role['name']))
+
+
+    # ldap auth sources
+    def process_auth_sources_ldap(self):
+        log.log(log.LOG_INFO, "Processing LDAP auth sources")
+        for auth in self.get_config_section('auth-source-ldap'):
+            # validate yaml
+            try:
+                self.validator.auth_source_ldaps(auth)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create LDAP source '{0}': YAML validation Error: {1}".format(auth['name'], e))
+                continue
+            try:
+                as_id   = self.fm.auth_source_ldaps.show(auth['name'])['id']
+                log.log(log.LOG_WARN, "LDAP source {0} allready exists".format(auth['name']))
+                continue
+            except TypeError:
+                pass
+            ldap_auth_obj = self.dict_underscore(auth)
+            try:
+                self.fm.auth_source_ldaps.create( auth_source_ldap=ldap_auth_obj )
+            except:
+                log.log(log.LOG_ERROR, "Something went wrong creating LDAP source {0}".format(auth['name']))
+
+
+
+    def process_usergroups(self):
+        log.log(log.LOG_INFO, "Processing usergroups")
+        for group in self.get_config_section('usergroups'):
+            # validate yaml
+            try:
+                self.validator.usergroup(group)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create usergroup '{0}': YAML validation Error: {1}".format(group['name'], e))
+                continue
+            try:
+                as_id   = self.fm.usergroups.show(group['name'])['id']
+                #pprint(dir(self.fm.usergroups))
+                log.log(log.LOG_WARN, "Usergroup source {0} allready exists".format(group['name']))
+                continue
+            except TypeError:
+                pass
+
+            # find users
+            user_ids = []
+            try:
+                for user in group['users']:
+                    find = self.fm.users.show(user['name'])
+                    try:
+                        user_ids.append(find['id'])
+                    except TypeError:
+                        pass
+            except KeyError:
+                pass
+
+            # find groups
+            group_ids = []
+            try:
+                for sub_group in group['groups']:
+                    find = self.fm.usergroups.show(sub_group['name'])
+                    try:
+                        group_ids.append(find['id'])
+                    except TypeError:
+                        pass
+            except KeyError:
+                pass
+
+            # find roles
+            role_ids = []
+            try:
+                for role in group['roles']:
+                    find = self.fm.roles.show(role['name'])
+                    try:
+                        role_ids.append(find['id'])
+                    except TypeError:
+                        pass
+            except KeyError:
+                pass
+
+            fm_arr = {
+                'name': group['name']
+            }
+
+            if user_ids:
+                fm_arr['user_ids'] = user_ids
+            if group_ids:
+                fm_arr['usergroup_ids'] = group_ids
+            if role_ids:
+                fm_arr['role_ids'] = role_ids
+
+            try:
+                ug_id = self.fm.usergroups.create(usergroup=fm_arr)
+            except:
+                log.log(log.LOG_ERROR, "Error creating usergroup {0}".format(group['name']))
+                continue
+
+            # external usergroups
+            try:
+                for auth in group['ext-usergroups']:
+                    as_id   = self.fm.auth_source_ldaps.show(auth['auth-source-ldap'])['id']
+                    as_obj = {
+                        'name':             auth['name'],
+                        'auth_source_id':   as_id
+                        }
+                    try:
+                        self.fm.usergroups.external_usergroups_create(group['name'], external_usergroup=as_obj)
+                    except TypeError:
+                        log.log(log.LOG_ERROR, "Error adding external group {0} to usergroup {1}".format(auth['name'], group['name']))
+            except KeyError:
+                continue
+
+
+
+
     def get_host(self, host_id):
         host = self.fm.hosts.show(id=host_id)
         return host
@@ -953,6 +1127,13 @@ class foreman:
         except:
             return False
 
+    def dict_underscore(self, d):
+        new = {}
+        for k, v in d.iteritems():
+            if isinstance(v, dict):
+                v = print_dict(v)
+            new[k.replace('-', '_')] = v
+        return new
 
     def get_audit_ip(self, host_id):
         # this is hacky right now since the audits-api has an bug and does not return any audits whe passing host_id
