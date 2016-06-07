@@ -284,14 +284,14 @@ hostgroup:
 
 
 
-#### Section `cleanup-[architecture|partition-table|provisioning-template]`
+#### Section `cleanup-[architecture|compute-profile|partition-table|provisioning-template]`
 ```yaml
-cleanup-[architecture|partition-table|provisioning-template]:
+cleanup-[architecture|compute-profile|partition-table|provisioning-template]:
   - name: foo
   - name: bar
 ```
 Removes specified objects, mapping to object.name
-- __name__                  architecture|partition-table|provisioning-template name to delete
+- __name__                  architecture|compute-profile|partition-table|provisioning-template name to delete
 
 
 

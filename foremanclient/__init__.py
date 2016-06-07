@@ -150,6 +150,10 @@ class validator:
             Required('name'):                           All(str)
         })
 
+        self.cleanup_computeprfl = Schema({
+            Required('name'):                           All(str)
+        })
+
         self.cleanup_medium = Schema({
             Required('name'):                           All(str)
         })
@@ -249,6 +253,25 @@ class foreman:
                 self.fm.architectures.destroy( arch['name'] )
             except:
                 log.log(log.LOG_WARN, "Architecture '{0}' already absent.".format(arch['name']))
+
+
+
+    def process_cleanup_computeprfl(self):
+        log.log(log.LOG_INFO, "Processing Cleanup of Compute profiles")
+        for computeprfl in self.get_config_section('cleanup-compute-profile'):
+            try:
+                self.validator.cleanup_computeprfl(computeprfl)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot delete Compute profile '{0}': YAML validation Error: {1}".format(computeprfl['name'], e))
+                continue
+
+            try:
+                self.fm.compute_profiles.show(computeprfl['name'])['id']
+                log.log(log.LOG_INFO, "Delete Compute profile '{0}'".format(computeprfl['name']))
+
+                self.fm.compute_profiles.destroy( computeprfl['name'] )
+            except:
+                log.log(log.LOG_WARN, "Compute profile '{0}' already absent.".format(computeprfl['name']))
 
 
 
@@ -613,15 +636,16 @@ class foreman:
                 os_obj = self.fm.operatingsystems.create(operatingsystem=os_tpl)
 
                 #  host_params
-                for name,value in operatingsystem['parameters'].iteritems():
-                    p = {
-                        'name':     name,
-                        'value':    value
-                    }
-                    try:
-                        self.fm.operatingsystems.parameters_create(os_obj['id'], p )
-                    except:
-                        log.log(log.LOG_WARN, "Error adding host parameter '{0}'".format(name))
+                if operatingsystem['parameters'] is not None:
+                    for name,value in operatingsystem['parameters'].iteritems():
+                        p = {
+                            'name':     name,
+                            'value':    value
+                        }
+                        try:
+                            self.fm.operatingsystems.parameters_create(os_obj['id'], p )
+                        except:
+                            log.log(log.LOG_WARN, "Error adding host parameter '{0}'".format(name))
 
 
     def process_config_provisioningtpl(self):
