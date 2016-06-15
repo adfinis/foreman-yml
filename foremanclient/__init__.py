@@ -5,7 +5,7 @@
 import sys
 import logging
 import log
-from foreman.client import Foreman
+from foreman.client import Foreman, ForemanException
 from pprint import pprint
 from voluptuous import Schema, Required, All, Length, Range, Optional, Any, MultipleInvalid
 
@@ -167,7 +167,8 @@ class validator:
         })
 
         self.role = Schema({
-            Required('name'):                           All(str)
+            Required('name'):                           All(str),
+            Optional('permissions'):                    Any(list, dict, None)
         })
 
         self.usergroup = Schema({
@@ -1022,10 +1023,55 @@ class foreman:
                 pass
 
             log.log(log.LOG_INFO, "Creating role {0}".format(role['name']))
+            apiobj = {
+                "name": role["name"]
+            }
             try:
-                self.fm.roles.create( role=role )
+                rapi_obj = self.fm.roles.create( role=apiobj )
+                created_role_id = rapi_obj['id']
             except:
                 log.log(log.LOG_ERROR, "Something went wrong creating role {0}".format(role['name']))
+                continue
+
+            # link permissions
+            try:
+                wanted_perms = role['permissions']
+            except KeyError:
+                continue
+
+            # since api cannot resolve by name, we need to fetch the whole list here
+            try:
+                permlist = self.fm.permissions.index(per_page=999999)['results']
+            except:
+                log.log(log.LOG_ERROR, "Failed to fetch permission list from foreman")
+                continue
+
+            for name, permclass in wanted_perms.iteritems():
+                permclass_ids = []
+                for perm in permclass:
+                    for pcand in permlist:
+                        if pcand['name']==perm:
+                            permclass_ids.append(pcand['id'])
+                # resolve ids was successfull, try to add the filters:
+                if len(permclass_ids)>0:
+                    log.log(log.LOG_INFO, "Adding permission group {0} to role {1}".format(name, role["name"]))
+                    fapiobj = {
+                        "role_id": created_role_id,
+                        "permission_ids": permclass_ids
+                    }
+                    try:
+                        self.fm.filters.create(filter=fapiobj)
+                    except ForemanException as e:
+                        dr = e.res.json()
+                        msg = dr['error']['full_messages'][0]
+                        log.log(log.LOG_ERROR, "Cannot link permission group '{0}', api says: '{1}'".format(name, msg) )
+                        continue
+                # else print a warning
+                else:
+                    log.log(log.LOG_WARN,"Failed to resolve any permissions of group {0}, skipping".format(name))
+
+            continue
+
 
 
     # ldap auth sources

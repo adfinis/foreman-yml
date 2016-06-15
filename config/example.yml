@@ -512,6 +512,14 @@ foreman:
 
   roles:
     - name: fooo
+      permissions:
+        architecture:
+          - view_architectures
+          - edit_architectures
+        compute_resources:
+          - view_compute_resources
+          - create_compute_resources
+          - destroy_compute_resources
     - name: bar
 
   auth-source-ldap:
