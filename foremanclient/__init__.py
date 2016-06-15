@@ -58,7 +58,7 @@ class validator:
             Optional('snippet'):                        Any(bool,None),
             Optional('audit-comment'):                  Any(str,None),
             Optional('template-kind-id'):               Any(int,None),
-            Optional('template-combination-attribute'): Any(int,None),
+            Optional('template-combination-attribute'): Any(int, list, dict, None),
             Optional('locked'):                         Any(bool,None),
             Optional('os'):                             Any(None, Schema([{
                 Required('name'):                       All(str)
@@ -693,6 +693,61 @@ class foreman:
                 }
                 prtes = self.fm.provisioning_templates.create(provisioning_template=pt_tpl)
 
+
+
+    def process_template_combination_attribute(self):
+        ptlist = self.fm.provisioning_templates.index(per_page=99999)['results']
+        envlist = self.fm.environments.index(per_page=99999)['results']
+        for pt in self.get_config_section('provisioning-template'):
+
+            pt_id = False
+            for ptc in ptlist:
+                if (ptc['name'] == pt['name']):
+                    pt_id = ptc['id']
+            if not pt_id:
+                log.log(log.LOG_WARN, "Cannot resolve Provisioning template '{0}' ".format(pt['name']) )
+                continue
+
+            try:
+                linklist = pt['template-combination-attribute']
+            except KeyError:
+                continue
+
+            for item in linklist:
+                env_id = False
+                hg_id = False
+                for envc in envlist:
+                    try:
+                        if (item['enviroment'] == envc['name']):
+                            env_id = envc['id']
+                    except KeyError:
+                        env_id = False
+                try:
+                    hg_id = self.fm.hostgroups.show(item['hostgroup'])['id']
+                except:
+                    hg_id = False
+
+                if hg_id is not False or env_id is not False:
+
+                    pt_api_arr = {
+                        "template_combinations_attributes": [ {} ]
+                    }
+
+                    if hg_id is not False:
+                        pt_api_arr["template_combinations_attributes"][0]["hostgroup_id"] = hg_id
+
+                    if env_id is not False:
+                        pt_api_arr["template_combinations_attributes"][0]["environment_id"] = env_id
+
+                    try:
+                        self.fm.provisioning_templates.update(pt_api_arr, pt_id)
+                    except ForemanException as e:
+                        dr = e.res.json()
+                        msg = dr['error']['full_messages'][0]
+                        log.log(log.LOG_WARN, "Cannot link provisioning template '{0}' api says: '{1}'".format(pt['name'], msg) )
+                        continue
+                else:
+                    log.log(log.LOG_WARN, "Cannot link provisioning template '{0}', at least hostgroup needs to be valid".format(pt['name'], msg) )
 
 
     def process_config_os_link(self):

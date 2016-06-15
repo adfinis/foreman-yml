@@ -473,6 +473,8 @@ foreman:
       audit-comment: initial import
       template-kind-id: 5
       template-combination-attribute:
+        - hostgroup: autotesting
+          enviroment: production
       os:
         - name: Ubuntu 14.04 LTS
       locked: false

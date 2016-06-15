@@ -76,6 +76,9 @@ def main():
     # Link items to operating system
     fm.process_config_os_link()
 
+    # Link template-combination-attribute
+    fm.process_template_combination_attribute()
+
     # host
     fm.process_config_host()
 
