@@ -283,6 +283,97 @@ hostgroup:
 - __domain__                Domain name, maps to `domain.name`
 
 
+#### Section `roles`
+```yaml
+roles:
+  - name: testrole
+    permissions:
+      architecture:
+        - view_architectures
+        - edit_architectures
+      compute_resources:
+        - view_compute_resources
+        - create_compute_resources
+        - destroy_compute_resources
+```
+- __name__                  Role name
+- __permissions__                     
+  - __groupname__           Name of permission group (not applied to foreman), only for clarity
+    - __permission_name__   Permission name, maps to `permission.name`
+    - __permission_name__   Permission name, maps to `permission.name`
+    - __permission_name__   Permission name, maps to `permission.name`
+    - ...                   ...
+
+
+#### Section `usergroups`
+```yaml
+usergroups:
+  - name: api-test2
+    users:
+      - name: foo
+      - name: burlson
+    groups:
+      - name: api-testgroup
+    ext-usergroups:
+      - name: foremangroup
+        auth-source-ldap: ldap-is-not-web-scale
+    roles:
+      - name: foo
+```
+- __name__                  Usergroup name
+- __users__                 List of users                
+  - __name__                Username, maps to `users.name`
+- __groups__                List of groups
+  - __name__                Groupname, maps to `usergroups.name`
+- __ext-usergroups__        List of external usergroups
+  - __name__                Name of the external usergroup
+  - __auth-source-ldap__    Name of the external auth source, maps to  `auth-source-ldap.name`
+- __roles__                 List of roles
+  - __name__                Role name, maps to `role.name`
+
+
+#### Section `auth-source-ldap`
+```yaml
+auth-source-ldap:
+  - name: ldap-is-not-web-scale
+    host: 10.11.12.13
+    port: 389
+    account: uid=binduser,cn=users,dc=test,dc=example,dc=com
+    account-password: 123qwe
+    base-dn: dc=test,dc=example,dc=com
+    attr-login: uid
+    attr-firstname: firstName
+    attr-lastname: lastName
+    attr-mail: mail
+    attr-photo: picture
+    onthefly-register: false
+    usergroup-sync: false
+    tls: false
+    groups-base: cn=groups,dc=test,dc=example,dc=com
+    ldap-filter:
+    server-type: posix
+```
+- __name__                    Name of the authsource
+- __host__                    LDAP host
+- __port__                    Server port
+- __account__                 Bind account user
+- __account-password__        Bind account password
+- __base-dn__                 LDAP Base DN
+- __attr-login__              LDAP attribute for username, required if onthefly-register is true
+- __attr-firstname__          LDAP attribute for first name, required if onthefly-register is true
+- __attr-lastname__           LDAP attribute for last name, required if onthefly-register is true
+- __attr-mail__               LDAP attribute for mail, required if onthefly-register is true
+- __attr-photo__              LDAP attribute for user photo
+- __onthefly-register__       Register users on the fly if `true` or `1`
+- __usergroup-sync__          Sync external user groups on login if `true` or `1`
+- __tls__                     If `true` or `1`, use SSL to connect to the server
+- __groups-base__             groups base DN
+- __ldap-filter__             LDAP filter
+- __server-type__             LDAP Server type, valid are `free_ipa`, `active_directory` and `posix`
+
+
+
+
 
 #### Section `cleanup-[architecture|compute-profile|partition-table|provisioning-template]`
 ```yaml
