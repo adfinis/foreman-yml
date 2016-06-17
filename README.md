@@ -309,6 +309,7 @@ roles:
 ```yaml
 usergroups:
   - name: api-test2
+    admin: false
     users:
       - name: foo
       - name: burlson
@@ -321,6 +322,7 @@ usergroups:
       - name: foo
 ```
 - __name__                  Usergroup name
+- __admin__                 If set to true or 1, group is has admin permissions
 - __users__                 List of users                
   - __name__                Username, maps to `users.name`
 - __groups__                List of groups

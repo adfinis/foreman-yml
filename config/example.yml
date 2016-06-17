@@ -545,6 +545,7 @@ foreman:
 
   usergroups:
     - name: api-testgroup
+      admin: true
     - name: api-test2
       users:
         - name: foo

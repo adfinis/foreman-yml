@@ -176,7 +176,8 @@ class validator:
             Optional('users'):                          Any(list, None),
             Optional('groups'):                         Any(list, None),
             Optional('ext-usergroups'):                 Any(list, None),
-            Optional('roles'):                          Any(list, None)
+            Optional('roles'):                          Any(list, None),
+            Optional('admin'):                          Any(bool, None)
         })
 
         self.auth_source_ldaps = Schema({
@@ -1216,6 +1217,13 @@ class foreman:
                 fm_arr['usergroup_ids'] = group_ids
             if role_ids:
                 fm_arr['role_ids'] = role_ids
+
+            try:
+                fm_arr['admin'] = group['admin'];
+            except KeyError:
+                pass
+
+            pprint(fm_arr)
 
             try:
                 ug_id = self.fm.usergroups.create(usergroup=fm_arr)
