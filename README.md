@@ -271,6 +271,9 @@ hostgroup:
     partition-table: Ubuntu Default
     subnet: lab
     domain: lab.local
+    parameters:
+      - keyname:  keyvalue
+
 ```
 - __name__                  Hostgroup name
 - __parent__                Parent hostgroup
@@ -281,6 +284,8 @@ hostgroup:
 - __partition-table__       Ptable name, maps to `partition-table.name`
 - __subnet__                Subnet name, maps to `subnet.name`
 - __domain__                Domain name, maps to `domain.name`
+- __parameters__            Dict of params
+  -__keyname__              Value of param
 
 
 #### Section `roles`

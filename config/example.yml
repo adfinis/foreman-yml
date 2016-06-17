@@ -511,6 +511,9 @@ foreman:
       partition-table: Ubuntu Default
       subnet: lab
       domain: lab.local
+      parameters:
+        foo: bar
+        bar: baz
 
   roles:
     - name: fooo

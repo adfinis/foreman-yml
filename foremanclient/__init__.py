@@ -114,6 +114,7 @@ class validator:
             Optional('partition-table'):                Any(str,None),
             Optional('domain'):                         Any(str,None),
             Optional('subnet'):                         Any(str,None),
+            Optional('parameters'):                     Any(dict, None)
         })
 
         self.smartproxy = Schema({
@@ -925,9 +926,32 @@ class foreman:
 
                 # send to foreman-api
                 try:
-                    self.fm.hostgroups.create(hostgroup=hg_arr)
-                except:
+                    hg_api_answer = self.fm.hostgroups.create(hostgroup=hg_arr)
+                except ForemanException as e:
+                        dr = e.res.json()
+                        msg = dr['error']['message']
+                        log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}', api says: '{1}'".format(hostgroup['name'], msg) )
+                        continue
+
+                try:
+                    created_hg_id = hg_api_answer['id']
+                except KeyError:
                     log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}'".format(hostgroup['name']))
+                    continue
+
+
+                # hostgroup parameters
+                if 'parameters' in hostgroup:
+                    for param_name, param_val in hostgroup['parameters'].iteritems():
+                        param_arr = { "name": param_name, "value": param_val }
+                        try:
+                            self.fm.hostgroups.parameters_create(param_arr, created_hg_id)
+                        except ForemanException as e:
+                            log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup param '{0}'".format(param_name) )
+                            continue
+
+                #except:
+                #    log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}'".format(hostgroup['name']))
 
 
 
