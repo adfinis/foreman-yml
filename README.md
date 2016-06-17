@@ -310,6 +310,29 @@ roles:
     - ...                   ...
 
 
+#### Section `users`
+```yaml
+users:
+  - login: testhaaaans
+    password: schmetterling42
+    mail: haaaans@example.com
+    auth-source: ldap-is-not-web-scale
+    firstname: Test
+    lastname: Haaaaaans
+    admin: true
+    timezone: UTC
+    locale: en
+```
+- __login__                  User login
+- __password__               Password of user
+- __auth-source__            Name of auth source or 'INTERNAL' for foreman-own auth source
+- __firstname__              First name of user
+- __lastname__               Last name of user
+- __admin__                  If `true`, user will be created with admin permissions
+- __timezone__               Timezone for the user
+- __locale__                 WebUI locale for the user
+
+
 #### Section `usergroups`
 ```yaml
 usergroups:

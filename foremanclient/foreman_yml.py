@@ -85,6 +85,9 @@ def main():
     # enterprise edition only: ldap
     fm.process_auth_sources_ldap()
 
+    # users
+    fm.process_config_user()
+
     # user groups
     fm.process_usergroups()
 

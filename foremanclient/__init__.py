@@ -181,6 +181,18 @@ class validator:
             Optional('admin'):                          Any(bool, None)
         })
 
+        self.user = Schema({
+            Required('login'):                         All(str),
+            Required('password'):                      All(str),
+            Required('mail'):                          All(str),
+            Optional('auth-source'):                   Any(str, None),
+            Optional('firstname'):                     Any(str, None),
+            Optional('lastname'):                      Any(str, None),
+            Optional('admin'):                         Any(bool, None),
+            Optional('timezone'):                      Any(str, None),
+            Optional('locale'):                        Any(str, None),
+        })
+
         self.auth_source_ldaps = Schema({
             Required('name'):                           All(str),
             Required('host'):                           All(str),
@@ -744,8 +756,7 @@ class foreman:
                     try:
                         self.fm.provisioning_templates.update(pt_api_arr, pt_id)
                     except ForemanException as e:
-                        dr = e.res.json()
-                        msg = dr['error']['full_messages'][0]
+                        msg = self.get_api_error_msg(e)
                         log.log(log.LOG_WARN, "Cannot link provisioning template '{0}' api says: '{1}'".format(pt['name'], msg) )
                         continue
                 else:
@@ -928,10 +939,9 @@ class foreman:
                 try:
                     hg_api_answer = self.fm.hostgroups.create(hostgroup=hg_arr)
                 except ForemanException as e:
-                        dr = e.res.json()
-                        msg = dr['error']['message']
-                        log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}', api says: '{1}'".format(hostgroup['name'], msg) )
-                        continue
+                    msg = self.get_api_error_msg(e)
+                    log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}', api says: '{1}'".format(hostgroup['name'], msg) )
+                    continue
 
                 try:
                     created_hg_id = hg_api_answer['id']
@@ -1142,8 +1152,7 @@ class foreman:
                     try:
                         self.fm.filters.create(filter=fapiobj)
                     except ForemanException as e:
-                        dr = e.res.json()
-                        msg = dr['error']['full_messages'][0]
+                        msg = self.get_api_error_msg(e)
                         log.log(log.LOG_ERROR, "Cannot link permission group '{0}', api says: '{1}'".format(name, msg) )
                         continue
                 # else print a warning
@@ -1271,6 +1280,51 @@ class foreman:
                 continue
 
 
+    def process_config_user(self):
+        log.log(log.LOG_INFO, "Processing users")
+        for user in self.get_config_section('users'):
+            # validate yaml
+            try:
+                self.validator.user(user)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create User '{0}': YAML validation Error: {1}".format(user['login'], e))
+                continue
+            try:
+                as_id   = self.fm.users.show(user['login'])['id']
+                log.log(log.LOG_WARN, "User  {0} allready exists".format(user['login']))
+                continue
+            except TypeError:
+                pass
+
+            # resolve auth source
+            if user['auth-source'] is not 'INTERNAL':
+                try:
+                    as_id   = self.fm.auth_source_ldaps.show(user['auth-source'])['id']
+                except TypeError:
+                    log.log(log.LOG_ERROR, "Cannot resolve auth source '{0}' for user '{1}', skipping creation".format(user['login'], user['auth-source']))
+                    continue
+                del(user['auth-source'])
+                user['auth_source_id'] = as_id
+            else:
+                del(user['auth-source'])
+                user['auth_source_id'] = 1
+
+            try:
+                self.fm.users.create(user=user)
+            except ForemanException as e:
+                msg = self.get_api_error_msg(e)
+                log.log(log.LOG_ERROR, "Cannot create user '{0}', api says: '{1}'".format(user['login'], msg) )
+                continue
+
+
+    def get_api_error_msg(self, e):
+        dr = e.res.json()
+        try:
+            msg = dr['error']['message']
+        except KeyError:
+            msg = dr['error']['full_messages'][0]
+
+        return msg
 
 
     def get_host(self, host_id):

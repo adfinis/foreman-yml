@@ -546,6 +546,21 @@ foreman:
       ldap-filter:
       server-type: posix
 
+  users:
+    - login: testhaaaans2
+      password: schmetterling42
+      mail: haaaans@example.com
+      auth-source: ldap-is-not-web-scale
+      firstname: Test
+      lastname: Haaaaaans
+      admin: true
+      timezone: UTCsdagasd
+      locale: en
+    - login: testhaaaans2
+      password: schmetterling42
+      mail: haaaans@example.com
+      auth-source: INTERNAL
+  
   usergroups:
     - name: api-testgroup
       admin: true
