@@ -55,7 +55,8 @@ setup(
 
     },
     install_requires = [
-        "pyyaml"
+        "pyyaml",
+        "requests"
     ],
     author = "Adfinis-SyGroup AG",
     author_email = "https://adfinis-sygroup.ch/",
