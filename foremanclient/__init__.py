@@ -714,6 +714,8 @@ class foreman:
         envlist = self.fm.environments.index(per_page=99999)['results']
         for pt in self.get_config_section('provisioning-template'):
 
+            msg = ""
+
             pt_id = False
             for ptc in ptlist:
                 if (ptc['name'] == pt['name']):
@@ -951,7 +953,7 @@ class foreman:
 
 
                 # hostgroup parameters
-                if 'parameters' in hostgroup:
+                if hostgroup['parameters'] is not None:
                     for param_name, param_val in hostgroup['parameters'].iteritems():
                         param_arr = { "name": param_name, "value": param_val }
                         try:
@@ -1206,39 +1208,42 @@ class foreman:
 
             # find users
             user_ids = []
-            try:
-                for user in group['users']:
-                    find = self.fm.users.show(user['name'])
-                    try:
-                        user_ids.append(find['id'])
-                    except TypeError:
-                        pass
-            except KeyError:
-                pass
+            if group['users'] is not None:
+                try:
+                    for user in group['users']:
+                        find = self.fm.users.show(user['name'])
+                        try:
+                            user_ids.append(find['id'])
+                        except TypeError:
+                            pass
+                except KeyError:
+                    pass
 
             # find groups
             group_ids = []
-            try:
-                for sub_group in group['groups']:
-                    find = self.fm.usergroups.show(sub_group['name'])
-                    try:
-                        group_ids.append(find['id'])
-                    except TypeError:
-                        pass
-            except KeyError:
-                pass
+            if group['groups'] is not None:
+                try:
+                    for sub_group in group['groups']:
+                        find = self.fm.usergroups.show(sub_group['name'])
+                        try:
+                            group_ids.append(find['id'])
+                        except TypeError:
+                            pass
+                except KeyError:
+                    pass
 
             # find roles
             role_ids = []
-            try:
-                for role in group['roles']:
-                    find = self.fm.roles.show(role['name'])
-                    try:
-                        role_ids.append(find['id'])
-                    except TypeError:
-                        pass
-            except KeyError:
-                pass
+            if group['roles'] is not None:
+                try:
+                    for role in group['roles']:
+                        find = self.fm.roles.show(role['name'])
+                        try:
+                            role_ids.append(find['id'])
+                        except TypeError:
+                            pass
+                except KeyError:
+                    pass
 
             fm_arr = {
                 'name': group['name']
@@ -1265,19 +1270,20 @@ class foreman:
                 continue
 
             # external usergroups
-            try:
-                for auth in group['ext-usergroups']:
-                    as_id   = self.fm.auth_source_ldaps.show(auth['auth-source-ldap'])['id']
-                    as_obj = {
-                        'name':             auth['name'],
-                        'auth_source_id':   as_id
-                        }
-                    try:
-                        self.fm.usergroups.external_usergroups_create(group['name'], external_usergroup=as_obj)
-                    except TypeError:
-                        log.log(log.LOG_ERROR, "Error adding external group {0} to usergroup {1}".format(auth['name'], group['name']))
-            except KeyError:
-                continue
+            if group['ext-usergroups'] is not None:
+                try:
+                    for auth in group['ext-usergroups']:
+                        as_id   = self.fm.auth_source_ldaps.show(auth['auth-source-ldap'])['id']
+                        as_obj = {
+                            'name':             auth['name'],
+                            'auth_source_id':   as_id
+                            }
+                        try:
+                            self.fm.usergroups.external_usergroups_create(group['name'], external_usergroup=as_obj)
+                        except TypeError:
+                            log.log(log.LOG_ERROR, "Error adding external group {0} to usergroup {1}".format(auth['name'], group['name']))
+                except KeyError:
+                    continue
 
 
     def process_config_user(self):
