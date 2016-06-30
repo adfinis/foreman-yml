@@ -78,6 +78,17 @@ class ForemanBase:
             new[k.replace('_', '-')] = v
         return new
 
+    def filter_dump(self, dump, wanted_keys):
+        ret = {}
+        dd = self.dict_dash(dump)
+        for setting in dd:
+            if setting in wanted_keys:
+                value = dd[setting]
+                if value is None or value=='':
+                    continue
+                ret[setting] = value
+        return ret
+
 
     def get_audit_ip(self, host_id):
         # this is hacky right now since the audits-api has an bug and does not return any audits whe passing host_id

@@ -9,6 +9,7 @@ import foremanclient
 import yaml
 from collections import OrderedDict
 from pprint import pprint
+from foreman.client import Foreman, ForemanException
 
 
 import re
@@ -37,6 +38,7 @@ def _fix_dump(dump, indentSize=2):
     return out.getvalue()
 
 
+
 class ForemanDump(foremanclient.ForemanBase):
 
 
@@ -58,6 +60,10 @@ class ForemanDump(foremanclient.ForemanBase):
         dumpdata['partition-table']  = self.dump_ptable()
         dumpdata['provisioning-template']  = self.dump_provisioningtpl()
         dumpdata['users']        = self.dump_users()
+        dumpdata['users']        = self.dump_users()
+        dumpdata['auth-source-ldap'] = self.dump_ldaps()
+        dumpdata['usergroups'] = self.dump_usergroups()
+        dumpdata['roles'] = self.dump_roles()
 
         # print the result
         fmyml = { 'foreman': dumpdata }
@@ -76,7 +82,7 @@ class ForemanDump(foremanclient.ForemanBase):
         yaml.add_representer(str, str_presenter)
 
         yml = yaml.dump(fmyml, allow_unicode=True, default_flow_style=False )
-        print((yml))
+        print( (yml) )
 
 
     def dump_hosts(self):
@@ -459,5 +465,59 @@ class ForemanDump(foremanclient.ForemanBase):
             usr_tpl['auth-source'] = auths
             ret.append(usr_tpl)
 
+        return ret
 
+
+    def dump_ldaps(self):
+        ret = []
+        wanted_keys = [
+            "name",
+            "host",
+            "port",
+            "base-dn",
+            "ldap-filter",
+            "tls",
+            "onthefly-register",
+            "usergroup-sync",
+            "attr-firstname",
+            "attr-lastname",
+            "attr-login",
+            "attr-mail",
+            "attr-photo",
+            "mail",
+            "timezone"
+        ]
+        all_ldaps = self.fm.auth_source_ldaps.index(per_page=99999)['results']
+        for ldaps in all_ldaps:
+            dump_obj = self.filter_dump(ldaps, wanted_keys)
+            ret.append(dump_obj)
+        return ret
+
+
+    def dump_usergroups(self):
+        ret = []
+        all_groups = self.fm.usergroups.index(per_page=99999)['results']
+        for group in all_groups:
+            gobj = {
+                "name": group['name'],
+                "admin": group['admin']
+            }
+            ret.append(gobj)
+            # users
+            uobj = self.fm.usergroups.users_index(group['id'])['results']
+            if (len(uobj)>0):
+                gobj['users'] = []
+                for user in uobj:
+                    add_u = { "name":user['login'] }
+                    gobj['users'].append(add_u)
+        return ret
+
+
+    def dump_roles(self):
+        ret = []
+        all_roles = self.fm.roles.index(per_page=99999)['results']
+        for role in all_roles:
+            ret.append(
+                self.filter_dump(role, ["name"] )
+            )
         return ret

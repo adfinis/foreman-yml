@@ -6,7 +6,7 @@ import sys
 from foremanclient.importer import ForemanImport
 from foremanclient.dump import ForemanDump
 from foremanclient.cleanup import ForemanCleanup
-
+import os
 
 import log
 
@@ -15,19 +15,21 @@ def fm_dump(fm):
     fm.dump()
 
 
-def fm_import(fm):
+def fm_cleanup(fm):
     # cleanup architecture
-    #fm.process_cleanup_arch()
+    fm.process_cleanup_arch()
 
     # cleanup medium
-    #fm.process_cleanup_medium()
+    fm.process_cleanup_medium()
 
     # cleanup partition table
-    #fm.process_cleanup_ptable()
+    fm.process_cleanup_ptable()
 
     # cleanup provisioning template
-    #fm.process_cleanup_provisioningtpl()
+    fm.process_cleanup_provisioningtpl()
 
+
+def fm_import(fm):
     # setting
     fm.process_config_settings()
 
@@ -97,13 +99,25 @@ def main():
         log.log(log.LOG_ERROR, "No action defined (Valid: dump, import, cleanup)")
         sys.exit(1)
 
+
+    if os.path.isfile(sys.argv[1]):
+        config_file = sys.argv[1]
+        function = "legacy"
+    else:
+        try:
+            config_file = sys.argv[2]
+        except IndexError:
+            log.log(log.LOG_ERROR, "No YAML provided")
+            sys.exit(1)
+
     try:
-        config_file = open(sys.argv[2], 'r')
+        config_file = open(config_file, 'r')
         config = yaml.load(config_file)
         config_file.close()
     except:
         log.log(log.LOG_ERROR, "Failed to load/parse config")
         sys.exit(1)
+
 
     if (function=="import"):
         fm = ForemanImport(config)
@@ -116,8 +130,16 @@ def main():
         fm_dump(fm)
 
     if (function=="cleanup"):
-        fm_cleanup();
+        fm = ForemanCleanup(config)
+        fm_cleanup(fm);
 
+    if (function=="legacy"):
+        fm_cls = ForemanCleanup(config)
+        fm_cls.connect()
+        fm_cleanup(fm_cls)
+        fm_imp = ForemanImport(config)
+        fm_imp.connect()
+        fm_import(fm_imp)
 
 
 

@@ -7,6 +7,7 @@ import logging
 import log
 import foremanclient
 from pprint import pprint
+from foreman.client import Foreman, ForemanException
 
 
 
