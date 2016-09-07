@@ -15,7 +15,7 @@ sudo pip install .
 ## Usage
 
 ```
-foreman-yml /path/to/config.yaml
+foreman-yml [import|dump|cleanup] /path/to/config.yaml
 ```
 
 
@@ -23,6 +23,38 @@ foreman-yml /path/to/config.yaml
 
 Root node of YAML is always `foreman`.
 You can find an configuration example under `config/example.yml`
+
+### Dump current configuration
+
+foreman-yml supports dumping the whole configuration of a remote foreman instance
+to sdout. Use `foreman-yml dump` for this feauture.
+
+For dumping, provide an config file with auth settings:
+```yaml
+foreman:
+  auth:
+  url: "https://foreman.lab.local"
+  user: username
+  pass: password
+```
+
+Then run foreman-yml like this to dump configuration:
+```
+foreman-yml dump /path/to/config.yml > foreman_dump.yml
+```
+
+
+### Import settings into foreman
+
+If no keyword or `import` is provided to `foreman-yml`, the script tries
+to import settings provided by yaml-file.
+
+```
+foreman-yml /path/to/config.yml
+foreman-yml dump /path/to/config.yml
+```
+
+The following config sections are supported:
 
 
 #### Section `auth`
@@ -403,7 +435,14 @@ auth-source-ldap:
 
 
 
+### Cleanup (delete) settings
 
+If the keyword `cleanup` is provided to foreman-yml, it will try to delete
+items specified by its name.
+
+```
+foreman-yml cleanup /path/to/config.yml
+```
 
 #### Section `cleanup-[architecture|compute-profile|partition-table|provisioning-template]`
 ```yaml
