@@ -381,10 +381,10 @@ class ForemanImport(foremanclient.ForemanBase):
                 log.log(log.LOG_WARN, "Cannot resolve Provisioning template '{0}' ".format(pt['name']) )
                 continue
 
-            try:
-                linklist = pt['template-combination-attribute']
-            except KeyError:
+            if 'template_combination_attribute' not in pt or pt['template-combination-attribute'] is None:
                 continue
+            else:
+                linklist = pt['template-combination-attribute']
 
             for item in linklist:
                 env_id = False
