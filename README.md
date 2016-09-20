@@ -319,6 +319,37 @@ hostgroup:
 - __parameters__            Dict of params
   -__keyname__              Value of param
 
+#### Section `host`
+```yaml
+host:
+  - name: testhost
+    domain: lab.local
+    architecture: x86_64
+    hostgroup: switzerland
+    environment: production
+    os: Ubuntu 14.04 LTS
+    media: Ubuntu Mirror
+    partition: Ubuntu Default
+    model: VMWare VM
+    mac: 00:11:22:33:44:55
+    root-pass: supersecret42
+    parameters:
+      env: prod
+      kernel_params: quiet
+```
+- __name__                  Host name
+- __domain__                Domain name, maps to `domain.name`
+- __architecture__          Architecture name, maps to `architecture.name`
+- __hostgroup__             Hostgroup name, maps to `hostgroup.name`
+- __environment__           Environment name, maps to `environment.name`
+- __os__                    Operating system name, maps to `os.name`
+- __media__                 Media name, maps to `medium.name`
+- __partition__             Ptable name, maps to `partition.name`
+- __model__                 Hardware model name, maps to `model.name`
+- __mac__                   MAC address
+- __root-pass__             Root password
+- __parameters__            Dict of params
+  - __keyname__              Value of param
 
 #### Section `roles`
 ```yaml
