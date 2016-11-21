@@ -191,9 +191,9 @@ class ForemanDump(foremanclient.ForemanBase):
                 if (setting == "name"):
                     os_tpl['name'] = value
                 if (setting == "major"):
-                    os_tpl['major'] = int(value)
+                    os_tpl['major'] = str(value)
                 if (setting == "minor"):
-                    os_tpl['minor'] = int(value)
+                    os_tpl['minor'] = str(value)
                 if (setting == "description"):
                     os_tpl['description'] = value
                 if (setting == "release_name"):
