@@ -343,11 +343,11 @@ class ForemanDump(foremanclient.ForemanBase):
                 pass
 
             # domains
-            subnet_tpl['domains'] = []
+            subnet_tpl['domain'] = []
 
             all_doms = self.fm.subnets.domains_index(dd['id'])
             for dom in all_doms['results']:
-                subnet_tpl['domains'].append(dom['name'])
+                subnet_tpl['domain'].append(dom['name'])
 
             ret.append(subnet_tpl)
 
