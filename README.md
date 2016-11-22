@@ -33,9 +33,9 @@ For dumping, provide an config file with auth settings:
 ```yaml
 foreman:
   auth:
-  url: "https://foreman.lab.local"
-  user: username
-  pass: password
+    url: "https://foreman.lab.local"
+    user: username
+    pass: password
 ```
 
 Then run foreman-yml like this to dump configuration:
