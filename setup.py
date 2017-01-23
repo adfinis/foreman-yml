@@ -4,9 +4,7 @@
 
 from setuptools import setup
 from setuptools import find_packages
-from setuptools.command.install import install
-import sys
-import os
+import codecs
 
 
 __version__  = None
@@ -15,45 +13,17 @@ with codecs.open(version_file, encoding="UTF-8") as f:
     code = compile(f.read(), version_file, 'exec')
     exec(code)
 
-
-def find_data(packages, extensions):
-    """Finds data files along with source.
-
-    :param   packages: Look in these packages
-    :param extensions: Look for these extensions
-    """
-    data = {}
-    for package in packages:
-        package_path = package.replace('.', '/')
-        for dirpath, _, filenames in os.walk(package_path):
-            for filename in filenames:
-                for extension in extensions:
-                    if filename.endswith(".%s" % extension):
-                        file_path = os.path.join(
-                            dirpath,
-                            filename
-                        )
-                        file_path = file_path[len(package) + 1:]
-                        if package not in data:
-                            data[package] = []
-                        data[package].append(file_path)
-    return data
-
-#with open('README.rst', 'r') as f:
-#    README_TEXT = f.read()
+with open('README.rst', 'r') as f:
+    README_TEXT = f.read()
 
 setup(
     name = "foreman-yaml",
-    version = "0.0.2",
+    version = "1.0.0",
     packages = find_packages(),
-    package_data=find_data(
-        find_packages(), ["json","py"]
-    ),
     entry_points = {
         'console_scripts': [
-            'foreman-yml = foremanclient.foreman_yml:main',
+            'foreman-yml = foreman-yml.foreman_yml:main',
         ]
-
     },
     install_requires = [
         "pyyaml",
@@ -62,19 +32,20 @@ setup(
     ],
     author = "Adfinis-SyGroup AG",
     author_email = "https://adfinis-sygroup.ch/",
-    description = "Foreman YAML Client",
-    long_description = "tbd",
-    keywords = "foreman yaml",
-    url = "https://adfinis-sygroup.ch/",
+    description = "Foreman YAML client",
+    long_description = README_TEXT,
+    keywords = "foreman, yaml, api",
+    url = "https://github.com/adfinis-sygroup/foreman-yml",
     classifiers = [
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
         "Intended Audience :: Information Technology",
-        "License :: OSI Approved :: "
-        "GNU Affero General Public License v3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2.6",
+        "Topic :: System :: Systems Administration",
     ]
 )
