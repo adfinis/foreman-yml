@@ -73,6 +73,9 @@ class ForemanImport(foremanclient.ForemanBase):
                 if dom_params:
                     self.fm.domains.update(fixdom, domo['id'])
 
+                if domain['location']:
+                    self.link_to_location(domain['location'],
+                                          domo['id'], 'domains')
 
 
     def process_config_enviroment(self):
@@ -997,3 +1000,87 @@ class ForemanImport(foremanclient.ForemanBase):
                 msg = self.get_api_error_msg(e)
                 log.log(log.LOG_ERROR, "Cannot create user '{0}', api says: '{1}'".format(user['login'], msg) )
                 continue
+
+    def process_config_location(self):
+        log.log(log.LOG_INFO, "Processing Location")
+        print(self.fm.locations.show(id='36'))
+        for loc in self.get_config_section('locations'):
+            # validate yaml
+            try:
+                self.validator.location(loc)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create Location '{0}': YAML validation Error: {1}".format(loc['name'], e))
+                continue
+            try:
+                print(self.fm.locations.show(loc['name']))
+                self.fm.locations.show(loc['name'])['id']
+                log.log(log.LOG_WARN, "Location  {0} allready exists".format(loc['name']))
+                continue
+            except TypeError as e:
+                print(e)
+                pass
+
+            location_data = {'name': loc['name']}
+            if loc.get('parent', None):
+                parent_id = self.fm.locations.show(loc['parent'])['id']
+                location_data.update({'parent_id': parent_id})
+            print('create location %s ' % location_data)
+            new_location = self.fm.locations.create(location=location_data)
+
+            if loc.get('children', None):
+                for child in loc['children']:
+                    location_data = {
+                                     'name': child['name'],
+                                     'parent_id': new_location['id']
+                                    }
+                    self.fm.locations.create(location=location_data)
+
+    def process_config_organization(self):
+        log.log(log.LOG_INFO, "Processing Organization")
+        for org in self.get_config_section('organizations'):
+            # validate yaml
+            try:
+                self.validator.organization(org)
+            except MultipleInvalid as e:
+                log.log(log.LOG_WARN, "Cannot create Organization '{0}': YAML validation Error: {1}".format(org['name'], e))
+                continue
+            try:
+                self.fm.organizations.show(org['name'])['id']
+                log.log(log.LOG_WARN, "Organization  {0} allready exists".format(org['name']))
+                continue
+            except TypeError:
+                pass
+
+            organization_data = {'name': org['name']}
+            if 'parent' in org:
+                parent_id = self.fm.organizations.show(org['parent'])['id']
+                organization_data.update({'parent_id': parent_id})
+            new_org = self.fm.organizations.create(organization=organization_data)
+
+            if 'children' in org:
+                for child in org['children']:
+                    organization_data = {'name': child['name']}
+                    organization_data.update({'parent_id': new_org['id']})
+                    self.fm.organizations.create(organization=organization_data)
+
+    def link_to_location(self, location, id, type):
+        """ Create the relation between the object and a location
+
+        Arguments:
+        location -- Location as a str
+        id -- ID of the object to link to
+        type -- Type of the object.
+                Possible types are:
+                users, smart_proxys, compute_resources, medium,
+                config_templates, ptables, provisioning_templates, domains,
+                realms, hostgroups, environments, subnets
+        """
+        location = self.fm.locations.show(location)
+        ids = []
+        print(location)
+        if len(location[type]) > 0:
+            ids = [item['id'] for item in location[type]]
+        ids.append(str(id))
+        payload = dict(type=ids)
+        print(payload)
+        #self.fm.locations.update(location=payload, location['id'])

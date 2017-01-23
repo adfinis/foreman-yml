@@ -591,3 +591,21 @@ foreman:
           auth-source-ldap: ldap-is-not-web-scale
       roles:
         - name: foo
+
+  locations:
+    - name: Switzerland
+    - name: Bern
+      parent: Switzerland
+    - name: Germany
+      children:
+        - name: Hamburg
+        - name: München
+
+  organizations:
+    - name: Foo-Organization
+    - name: Bar-Organization1
+      parent: Foo-Organization
+    - name: Fizz-Organization
+      children:
+        - name: Buzz-Organization
+        - name: FizzBuzz-Organization

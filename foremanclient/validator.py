@@ -16,7 +16,8 @@ class Validator:
             Required('name'):                           All(str),
             Optional('fullname'):                       Any(str, None),
             Optional('dns-proxy'):                      Any(str, None),
-            Optional('parameters'):                     Any(dict, None)
+            Optional('parameters'):                     Any(dict, None),
+            Optional('location'):                       Any(str, None)
         })
 
         self.enviroment = Schema({
@@ -210,4 +211,20 @@ class Validator:
                                                              'posix',
                                                               None
                                                         )
+        })
+
+        self.organization = Schema({
+            Required('name'):                           All(str),
+            Optional('parent'):                         All(str),
+            Optional('children'):                       Any(None, Schema([{
+                Required('name'):                       All(str)
+            }])),
+        })
+
+        self.location = Schema({
+            Required('name'):                           All(str),
+            Optional('parent'):                         All(str),
+            Optional('children'):                       Any(None, Schema([{
+                Required('name'):                       All(str)
+            }])),
         })

@@ -33,6 +33,12 @@ def fm_import(fm):
     # setting
     fm.process_config_settings()
 
+    # location
+    fm.process_config_location()
+
+    # organization
+    fm.process_config_organization()
+
     # architecture
     fm.process_config_arch()
 
