@@ -91,6 +91,8 @@ class Validator:
             Optional('template-combination-attribute'): Any(int, None),
             Optional('locked'):                         Any(bool, None),
             Optional('hostgroup'):                      Any(str, None),
+            Optional('location'):                       Any(str, None),
+            Optional('organization'):                   Any(str, None),
             Optional('parameters'):                     Any(dict, None),
             Optional('os'):                             Any(None, Schema([{
                 Required('name'):                       All(str)
