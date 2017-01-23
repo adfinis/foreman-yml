@@ -8,11 +8,12 @@ from setuptools.command.install import install
 import sys
 import os
 
-version = sys.version_info[0]
-if version > 2:
-    pass
-else:
-    pass
+
+__version__  = None
+version_file = "foreman-yml/version.py"
+with codecs.open(version_file, encoding="UTF-8") as f:
+    code = compile(f.read(), version_file, 'exec')
+    exec(code)
 
 
 def find_data(packages, extensions):
