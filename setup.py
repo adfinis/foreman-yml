@@ -17,7 +17,7 @@ with open('README.rst', 'r') as f:
     README_TEXT = f.read()
 
 setup(
-    name = "foreman-yaml",
+    name = "foreman-yml",
     version = "1.0.0",
     packages = find_packages(),
     entry_points = {
