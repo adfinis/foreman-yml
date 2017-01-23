@@ -8,7 +8,7 @@ import codecs
 
 
 __version__  = None
-version_file = "foreman-yml/version.py"
+version_file = "foreman_yml/version.py"
 with codecs.open(version_file, encoding="UTF-8") as f:
     code = compile(f.read(), version_file, 'exec')
     exec(code)
@@ -22,7 +22,7 @@ setup(
     packages = find_packages(),
     entry_points = {
         'console_scripts': [
-            'foreman-yml = foreman-yml.foreman_yml:main',
+            'foreman-yml = foreman_yml.main:main',
         ]
     },
     install_requires = [

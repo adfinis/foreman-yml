@@ -1,19 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-
-import sys
-import logging
 import log
-import foremanclient
-from pprint import pprint
-from foreman.client import Foreman, ForemanException
+from base import ForemanBase
 from voluptuous import MultipleInvalid
 
 
-
-
-class ForemanCleanup(foremanclient.ForemanBase):
+class ForemanCleanup(ForemanBase):
 
     def process_cleanup_arch(self):
         log.log(log.LOG_INFO, "Processing Cleanup of Architectures")

@@ -1,13 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-
-
 import sys
 import logging
 import log
-from foremanclient.validator import Validator
-from foreman.client import Foreman, ForemanException
-from pprint import pprint
+from foreman.client import Foreman
+from validator import Validator
 
 
 class ForemanBase:
@@ -18,14 +13,12 @@ class ForemanBase:
         self.loglevel = loglevel
         self.validator = Validator()
 
-
     def get_config_section(self, section):
         try:
             cfg = self.config[section]
         except:
             cfg = []
         return cfg
-
 
     def connect(self):
         try:
@@ -38,7 +31,6 @@ class ForemanBase:
             log.log(log.LOG_ERROR, "Cannot connect to Foreman-API")
             sys.exit(1)
 
-
     def get_api_error_msg(self, e):
         dr = e.res.json()
         try:
@@ -48,11 +40,9 @@ class ForemanBase:
 
         return msg
 
-
     def get_host(self, host_id):
         host = self.fm.hosts.show(id=host_id)
         return host
-
 
     def remove_host(self, host_id):
         try:
@@ -60,7 +50,6 @@ class ForemanBase:
             return True
         except:
             return False
-
 
     def dict_underscore(self, d):
         new = {}
@@ -88,7 +77,6 @@ class ForemanBase:
                     continue
                 ret[setting] = value
         return ret
-
 
     def get_audit_ip(self, host_id):
         # this is hacky right now since the audits-api has an bug and does not return any audits whe passing host_id

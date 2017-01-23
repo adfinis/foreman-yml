@@ -2,7 +2,8 @@
 # -*- coding: utf8 -*-
 
 
-from voluptuous import Schema, Required, All, Length, Range, Optional, Any, MultipleInvalid
+from voluptuous import Schema, Required, All, Optional, Any
+
 
 class Validator:
 
@@ -60,13 +61,19 @@ class Validator:
 
         self.os = Schema({
             Required('name'):                           All(str),
-            Required('major'):                          Any(str,int),
-            Required('minor'):                          Any(str,int),
-            Optional('description'):                    Any(str,None),
-            Optional('family'):                         Any(str,None),
-            Optional('release-name'):                   Any(str,None),
+            Required('major'):                          Any(str, int),
+            Required('minor'):                          Any(str, int),
+            Optional('description'):                    Any(str, None),
+            Optional('family'):                         Any(str, None),
+            Optional('release-name'):                   Any(str, None),
             Optional('parameters'):                     Any(dict, None),
-            Optional('password-hash'):                  Any('MD5', 'SHA256', 'SHA512', 'Base64', None ),
+            Optional('password-hash'):                  Any(
+                                                            'MD5',
+                                                            'SHA256',
+                                                            'SHA512',
+                                                            'Base64',
+                                                            None
+                                                            ),
             Optional('architecture'):                   Any(None, Schema([{
                 Required('name'):                       All(str)
             }])),
@@ -101,14 +108,14 @@ class Validator:
 
         self.hostgroup = Schema({
             Required('name'):                           All(str),
-            Optional('parent'):                         Any(str,None),
-            Optional('environment'):                    Any(str,None),
-            Optional('os'):                             Any(str,None),
-            Optional('architecture'):                   Any(str,None),
-            Optional('medium'):                         Any(str,None),
-            Optional('partition-table'):                Any(str,None),
-            Optional('domain'):                         Any(str,None),
-            Optional('subnet'):                         Any(str,None),
+            Optional('parent'):                         Any(str, None),
+            Optional('environment'):                    Any(str, None),
+            Optional('os'):                             Any(str, None),
+            Optional('architecture'):                   Any(str, None),
+            Optional('medium'):                         Any(str, None),
+            Optional('partition-table'):                Any(str, None),
+            Optional('domain'):                         Any(str, None),
+            Optional('subnet'):                         Any(str, None),
             Optional('parameters'):                     Any(dict, None)
         })
 
@@ -119,7 +126,8 @@ class Validator:
 
         self.setting = Schema({
             Required('name'):                           All(str),
-            Optional('value'):                          Any(list, str, bool, int, None),
+            Optional('value'):                          Any(list, str, bool,
+                                                            int, None),
         })
 
         self.subnet =  Schema({
@@ -205,9 +213,9 @@ class Validator:
             Optional('tls'):                            Any(bool, int, None),
             Optional('groups-base'):                    Any(str, None),
             Optional('ldap-filter'):                    Any(str, None),
-            Optional('server-type'):                    Any( 'free_ipa',
-                                                             'active_directory',
-                                                             'posix',
-                                                              None
-                                                        )
+            Optional('server-type'):                    Any('free_ipa',
+                                                            'active_directory',
+                                                            'posix',
+                                                            None
+                                                            )
         })
