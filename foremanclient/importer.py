@@ -246,7 +246,8 @@ class ForemanImport(foremanclient.ForemanBase):
                     'from':             subnet['from'],
                     'to':               subnet['to'],
                     'vlanid':           subnet['vlanid'],
-                    'boot_mode':        subnet['boot-mode']
+                    'boot_mode':        subnet['boot-mode'],
+                    'network_type':     subnet['network-type'],
                 }
 
                 if add_domain: subnet_tpl['domain_ids'] = add_domain

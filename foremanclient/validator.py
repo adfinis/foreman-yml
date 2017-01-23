@@ -140,6 +140,7 @@ class Validator:
             Optional('tftp-proxy'):                     Any(str, None),
             Optional('dns-proxy'):                      Any(str, None),
             Optional('boot-mode'):                      Any('Static', 'DHCP', None),
+            Optional('network-type'):                   Any('IPv4', 'IPv6', None),
         })
 
         self.cleanup_arch = Schema({
