@@ -56,7 +56,8 @@ setup(
     },
     install_requires = [
         "pyyaml",
-        "requests"
+        "requests",
+        "python-foreman"
     ],
     author = "Adfinis-SyGroup AG",
     author_email = "https://adfinis-sygroup.ch/",
