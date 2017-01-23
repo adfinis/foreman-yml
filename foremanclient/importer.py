@@ -687,6 +687,20 @@ class ForemanImport(foremanclient.ForemanBase):
                     log.log(log.LOG_ERROR, "Model '{0}' does not exist".format(hostc['model']))
                     continue
 
+                # get organization_id
+                try:
+                    organization_id = self.fm.organizations.show(hostc['organization'])['id']
+                except:
+                    log.log(log.LOG_ERROR, "Organization '{0}' does not exist".format(hostc['organization']))
+                    continue
+
+                # get location_id
+                try:
+                    location_id = self.fm.locations.show(hostc['location'])['id']
+                except:
+                    log.log(log.LOG_ERROR, "Location '{0}' does not exist".format(hostc['location']))
+                    continue
+
                 # build host_params array
                 host_params = []
                 for name,value in hostc['parameters'].iteritems():
@@ -710,6 +724,8 @@ class ForemanImport(foremanclient.ForemanBase):
                     'ptable_id':            parttable_id,
                     'model_id':             model_id,
                     'root_pass':            hostc['root-pass'],
+                    'organization_id':      organization_id,
+                    'location_id':          location_id
                 }
 
                 # try to get mac
