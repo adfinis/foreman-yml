@@ -1,6 +1,13 @@
 foreman-yml
 ===========
 
+|Travis| |PyPi| |License|
+
+.. |PyPi| image:: https://img.shields.io/pypi/v/foreman-yml.svg?style=flat-square
+   :target: https://pypi.python.org/pypi/foreman-yml
+.. |License| image:: https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square
+   :target: LICENSE
+
 Make automated foreman configuration as easy as pie.
 
 This script automatically resolves names so you can link templates,
