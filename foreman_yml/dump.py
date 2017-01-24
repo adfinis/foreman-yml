@@ -5,7 +5,7 @@
 import sys
 import logging
 import log
-import foremanclient
+from base import ForemanBase
 import yaml
 from collections import OrderedDict
 from pprint import pprint
@@ -39,7 +39,7 @@ def _fix_dump(dump, indentSize=2):
 
 
 
-class ForemanDump(foremanclient.ForemanBase):
+class ForemanDump(ForemanBase):
 
 
 

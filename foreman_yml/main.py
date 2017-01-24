@@ -3,9 +3,9 @@
 
 import yaml
 import sys
-from foremanclient.importer import ForemanImport
-from foremanclient.dump import ForemanDump
-from foremanclient.cleanup import ForemanCleanup
+from importer import ForemanImport
+from dump import ForemanDump
+from cleanup import ForemanCleanup
 import os
 
 import log
@@ -88,8 +88,6 @@ def fm_import(fm):
     fm.process_roles()
 
 
-
-
 def main():
     global LOGLEVEL
 
@@ -98,7 +96,6 @@ def main():
     except:
         log.log(log.LOG_ERROR, "No action defined (Valid: dump, import, cleanup)")
         sys.exit(1)
-
 
     if os.path.isfile(sys.argv[1]):
         config_file = sys.argv[1]
@@ -118,30 +115,27 @@ def main():
         log.log(log.LOG_ERROR, "Failed to load/parse config")
         sys.exit(1)
 
-
-    if (function=="import"):
+    if (function == "import"):
         fm = ForemanImport(config)
         fm.connect()
         fm_import(fm)
 
-    if (function=="dump"):
+    if (function == "dump"):
         fm = ForemanDump(config)
         fm.connect()
         fm_dump(fm)
 
-    if (function=="cleanup"):
+    if (function == "cleanup"):
         fm = ForemanCleanup(config)
-        fm_cleanup(fm);
+        fm_cleanup(fm)
 
-    if (function=="legacy"):
+    if (function == "legacy"):
         fm_cls = ForemanCleanup(config)
         fm_cls.connect()
         fm_cleanup(fm_cls)
         fm_imp = ForemanImport(config)
         fm_imp.connect()
         fm_import(fm_imp)
-
-
 
 
 if __name__ == '__main__':

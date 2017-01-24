@@ -5,14 +5,13 @@
 import sys
 import logging
 import log
-import foremanclient
+from base import ForemanBase
 from pprint import pprint
 from foreman.client import Foreman, ForemanException
 from voluptuous import MultipleInvalid
 
 
-
-class ForemanImport(foremanclient.ForemanBase):
+class ForemanImport(ForemanBase):
 
     def process_config_arch(self):
         log.log(log.LOG_INFO, "Processing Architectures")
