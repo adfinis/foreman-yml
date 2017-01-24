@@ -1,7 +1,7 @@
 foreman-yml
 ===========
 
-|Travis| |PyPi| |License|
+|PyPi| |License|
 
 .. |PyPi| image:: https://img.shields.io/pypi/v/foreman-yml.svg?style=flat-square
    :target: https://pypi.python.org/pypi/foreman-yml
