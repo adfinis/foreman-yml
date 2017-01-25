@@ -44,7 +44,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name = "foreman-yml",
-    version = "1.0.0",
+    version = __version__,
     packages = find_packages(),
     package_data=find_data(
         find_packages(), ["json", "py"]
