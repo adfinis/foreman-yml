@@ -9,6 +9,7 @@ from pprint import pprint
 from foreman.client import Foreman, ForemanException
 from voluptuous import MultipleInvalid
 
+from helper import filterbyname
 
 class ForemanImport(ForemanBase):
 
@@ -728,7 +729,11 @@ class ForemanImport(ForemanBase):
                     organization = self.fm.organizations.show(hostc['organization'])
                     log.log(log.LOG_DEBUG, "Dumping Organization Response")
                     log.log(log.LOG_DEBUG, organization, True)
-                    organization_id = organization['id']
+                    if len(organization) > 0:
+                        organization_id = organization['id']
+                    else:
+                        log.log(log.LOG_INFO, "Organization %s not found. Searching organization with name" % hostc['organization'])
+                        organization_id = filterbyname(self.fm.organizations.index(per_page=99999), hostc['organization'])
                 except:
                     log.log(log.LOG_ERROR, "Organization '{0}' does not exist".format(hostc['organization']))
                     continue
@@ -739,7 +744,11 @@ class ForemanImport(ForemanBase):
                     location = self.fm.locations.show(hostc['location'])
                     log.log(log.LOG_DEBUG, "Dumping Location Response")
                     log.log(log.LOG_DEBUG, organization, True)
-                    location_id = location['id']
+                    if len(location) > 0:
+                        location_id = location['id']
+                    else:
+                        log.log(log.LOG_INFO, "Location %s not found. Searching location with name" % hostc['location'])
+                        location_id = filterbyname(self.fm.locations.index(per_page=99999), hostc['location'])
                 except:
                     log.log(log.LOG_ERROR, "Location '{0}' does not exist".format(hostc['location']))
                     continue
