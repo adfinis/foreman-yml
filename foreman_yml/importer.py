@@ -3,7 +3,6 @@
 
 
 import sys
-import logging
 import log
 from base import ForemanBase
 from pprint import pprint
@@ -621,28 +620,38 @@ class ForemanImport(ForemanBase):
                 #except:
                 #    log.log(log.LOG_ERROR, "An Error Occured when creating Hostgroup '{0}'".format(hostgroup['name']))
 
-
-
     def process_config_host(self):
         for hostc in self.get_config_section('host'):
             hostname = "{0}.{1}".format(hostc['name'], hostc['domain'])
             try:
                 host = self.fm.hosts.show(hostname)
+                log.log(log.LOG_DEBUG, "Dumping Host Response")
+                log.log(log.LOG_DEBUG, host, True)
                 host_id = host['id']
-                log.log(log.LOG_DEBUG, "Host '{0}' (id={1}) already present.".format(hostc['name'], host_id))
+                log.log(log.LOG_INFO, "Host '{0}' (id={1}) already present.".format(hostc['name'], host_id))
             except:
 
                 # get domain_id
                 try:
-                    domain_id = self.fm.domains.show(hostc['domain'])['id']
+                    log.log(log.LOG_DEBUG, "Get Domain")
+                    domains = self.fm.domains.show(hostc['domain'])
+                    log.log(log.LOG_DEBUG, "Dumping Domain Response")
+                    log.log(log.LOG_DEBUG, domains, True)
+                    domain_id = domains['id']
+                    log.log(log.LOG_INFO, "Domain with name {0} found."
+                                          "Domain has ID {1}".format(hostc['domain'], domain_id)
+                            )
                 except:
-                    log.log(log.LOG_ERROR, "Domain {0} does not exist".format(hostc['environment']))
+                    log.log(log.LOG_ERROR, "Domain {0} does not exist".format(hostc['domain']))
                     continue
 
                 # get environment_id
-                envlist = self.fm.environments.index(per_page=99999)['results']
+                log.log(log.LOG_DEBUG, "Get Environment")
                 enviroment_id = False
-                for envc in envlist:
+                envlist = self.fm.environments.index(per_page=99999)
+                log.log(log.LOG_DEBUG, "Dumping Environment Response")
+                log.log(log.LOG_DEBUG, envlist, True)
+                for envc in envlist['results']:
                     if (hostc['environment'] == envc['name']):
                         enviroment_id = envc['id']
                 if not enviroment_id:
@@ -651,51 +660,86 @@ class ForemanImport(ForemanBase):
 
                 # get architecture_id
                 try:
-                    architecture_id = self.fm.architectures.show(hostc['architecture'])['id']
+                    log.log(log.LOG_DEBUG, "Get Architecture")
+                    architecture = self.fm.architectures.show(hostc['architecture'])
+                    log.log(log.LOG_DEBUG, "Dumping Architecture Response")
+                    log.log(log.LOG_DEBUG, architecture, True)
+                    architecture_id = architecture['id']
+                    log.log(log.LOG_INFO, "Architecture with name {0} found."
+                                          "Architecture has ID {1}".format(hostc['architecture'], architecture_id))
                 except:
                     log.log(log.LOG_ERROR, "Architecture {0} does not exist".format(hostc['architecture']))
                     continue
 
                 # get os_id
                 try:
-                    os_id = self.fm.operatingsystems.show(hostc['os'])['id']
+                    log.log(log.LOG_DEBUG, "Get Operatingsystem")
+                    os = self.fm.operatingsystems.show(hostc['os'])
+                    os_id = os['id']
+                    log.log(log.LOG_DEBUG, "Dumping Operatingsystem Response")
+                    log.log(log.LOG_DEBUG, os, True)
+                    log.log(log.LOG_INFO, "Operatingsystem with name {0} found."
+                                          "Operatingsystem has ID {1}".format(hostc['os'], os_id))
+
                 except:
                     log.log(log.LOG_ERROR, "OS {0} does not exist".format(hostc['os']))
                     continue
 
                 # get media_id, show() not working here, manual mapping
+                log.log(log.LOG_DEBUG, "Get Media")
                 media_id = False
-                for media in self.fm.media.index()['results']:
+                medias = self.fm.media.index()
+                log.log(log.LOG_DEBUG, "Dumping Media Response")
+                log.log(log.LOG_DEBUG, medias, True)
+                for media in medias['results']:
                     if (media['name'] == hostc['media']):
                         media_id = media['id']
+                        log.log(log.LOG_INFO, "Media with name {0} found."
+                                              "Media has ID {1}".format(hostc['media'], media_id))
                 if not media_id:
                     log.log(log.LOG_ERROR, "Media {0} does not exist".format(hostc['media']))
                     continue
 
                 # get parttable_id
+                log.log(log.LOG_DEBUG, "Get Partition")
                 try:
-                    parttable_id = self.fm.ptables.show(hostc['partition'])['id']
+                    parttable = self.fm.ptables.show(hostc['partition'])
+                    log.log(log.LOG_DEBUG, "Dumping Parttable Response")
+                    log.log(log.LOG_DEBUG, parttable, True)
+                    parttable_id = parttable['id']
                 except:
                     log.log(log.LOG_ERROR, "Partition {0} does not exist".format(hostc['partition']))
                     continue
 
                 # get model_id
+                log.log(log.LOG_DEBUG, "Get Model")
                 try:
-                    model_id = self.fm.models.show(hostc['model'])['id']
+                    model = self.fm.models.show(hostc['model'])
+                    log.log(log.LOG_DEBUG, "Dumping Model Response")
+                    log.log(log.LOG_DEBUG, model, True)
+                    model_id = model['id']
                 except:
                     log.log(log.LOG_ERROR, "Model '{0}' does not exist".format(hostc['model']))
                     continue
 
                 # get organization_id
+                log.log(log.LOG_DEBUG, "Get Organization")
                 try:
-                    organization_id = self.fm.organizations.show(hostc['organization'])['id']
+                    organization = self.fm.organizations.show(hostc['organization'])
+                    log.log(log.LOG_DEBUG, "Dumping Organization Response")
+                    log.log(log.LOG_DEBUG, organization, True)
+                    organization_id = organization['id']
                 except:
                     log.log(log.LOG_ERROR, "Organization '{0}' does not exist".format(hostc['organization']))
                     continue
 
                 # get location_id
+                log.log(log.LOG_DEBUG, "Get Location")
                 try:
-                    location_id = self.fm.locations.show(hostc['location'])['id']
+                    location = self.fm.locations.show(hostc['location'])
+                    log.log(log.LOG_DEBUG, "Dumping Location Response")
+                    log.log(log.LOG_DEBUG, organization, True)
+                    location_id = location['id']
                 except:
                     log.log(log.LOG_ERROR, "Location '{0}' does not exist".format(hostc['location']))
                     continue
