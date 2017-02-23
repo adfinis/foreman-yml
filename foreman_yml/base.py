@@ -9,6 +9,7 @@ class ForemanBase:
 
     def __init__(self, config, loglevel=logging.INFO):
         logging.basicConfig(level=loglevel)
+        log.LOGLEVEL = loglevel
         self.config = config['foreman']
         self.loglevel = loglevel
         self.validator = Validator()

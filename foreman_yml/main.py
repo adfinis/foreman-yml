@@ -7,7 +7,6 @@ from importer import ForemanImport
 from dump import ForemanDump
 from cleanup import ForemanCleanup
 import os
-
 import log
 
 
@@ -89,7 +88,6 @@ def fm_import(fm):
 
 
 def main():
-    global LOGLEVEL
 
     try:
         function = sys.argv[1]
