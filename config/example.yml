@@ -121,7 +121,7 @@ foreman:
       tftp-proxy: Smart Proxy
       dns-proxy:
       boot-mode: DHCP
-      network_type: IPv4
+      network-type: IPv4
 
   model:
     - name: Virtual Machine
@@ -577,7 +577,7 @@ foreman:
       password: schmetterling42
       mail: haaaans@example.com
       auth-source: INTERNAL
-  
+
   usergroups:
     - name: api-testgroup
       admin: true
