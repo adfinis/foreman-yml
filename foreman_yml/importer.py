@@ -789,11 +789,15 @@ class ForemanImport(ForemanBase):
                     host_tpl['mac'] = hmac
 
                 # get hostgroup_id
-                hg_id = False
+
+                hostgroup_id = False
                 try:
-                    hg_id = self.fm.hostgroups.show(hostc['hostgroup'])['id']
-                    if hg_id:
-                        host_tpl['hostgroup_id'] = hg_id
+                    hostgroups = self.fm.hostgroups.index()
+                    log.log(log.LOG_DEBUG, hostgroups, True)
+                    hostgroup_id = filterbyname(hostgroups, hostc['hostgroup'])
+                    if hostgroup_id:
+                        log.log(log.LOG_DEBUG, "Add Hostgroup %s to the host" % hostgroup_id)
+                        host_tpl['hostgroup_id'] = hostgroup_id
                 except:
                     try:
                         log.log(log.LOG_ERROR, "Hostgroup {0} does not exist".format(hostc['hostgroup']))
