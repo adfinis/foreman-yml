@@ -23,6 +23,12 @@ Installation
     cd foreman-yml
     sudo pip install .
 
+Note CentOS/RHEL
+~~~~~~~~~~~~~~~~
+
+::
+    yum install gcc python-devel
+
 Usage
 -----
 
