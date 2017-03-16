@@ -19,7 +19,7 @@ Installation
 
 ::
 
-    git clone https://github.com/adfinis-sygroup/foreman-yml
+    git clone https://github.com/adfinis-sygroup/foreman-yml --recursive
     cd foreman-yml
     sudo pip install .
 
