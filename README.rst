@@ -27,7 +27,7 @@ Note CentOS/RHEL
 ~~~~~~~~~~~~~~~~
 
 ::
-    yum install gcc python-devel
+    sudo yum install gcc python-devel python-pip python-argparse -y
 
 Usage
 -----
