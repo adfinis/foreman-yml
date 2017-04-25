@@ -185,6 +185,7 @@ Section ``subnet``
         tftp-proxy: Smart Proxy
         dns-proxy:
         boot-mode: DHCP
+        network-type: IPv4
 
 -  **name** Subnet name
 -  **network** Network address
@@ -207,6 +208,8 @@ Section ``subnet``
    ``smart-proxy.name``
 -  **boot-mode** Default boot mode for interfaces assigned to this
    subnet, valid values are "Static", "DHCP"
+-  **network-type** Type or protocol, IPv4 or IPv6, defaults to IPv4,
+   valid values are "IPv4", "IPv6"
 
 Section ``model``
 ^^^^^^^^^^^^^^^^^

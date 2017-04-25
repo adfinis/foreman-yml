@@ -318,7 +318,8 @@ class ForemanDump(ForemanBase):
             "vlanid",
             "dns-primary",
             "dns-secondary",
-            "boot-mode"
+            "boot-mode",
+            "network-type"
         ]
         all_subnets = self.fm.subnets.index(per_page=99999)['results']
         for subnet in all_subnets:
