@@ -59,8 +59,8 @@ setup(
         "requests",
         "python-foreman"
     ],
-    author = "Adfinis-SyGroup AG",
-    author_email = "https://adfinis-sygroup.ch/",
+    author = "Adfinis SyGroup AG",
+    author_email = "info@adfinis-sygroup.ch",
     description = "Foreman YAML client",
     long_description = README_TEXT,
     keywords = "foreman, yaml, api",
