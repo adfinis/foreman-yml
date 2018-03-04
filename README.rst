@@ -580,6 +580,16 @@ Hacking
     source venv-dev/bin/activate
     pip install -e .
 
+Docker
+------
+
+::
+
+    docker build -t foreman-yml .
+    docker run foreman-yml dump my-server-config.yml > my-server.dump
+    # specific snowflake configuration
+    docker run -ti -v $(pwd)/configs:/foreman-yml/configs foreman-yml dump configs/snowflake.yml
+
 Future
 ------
 
