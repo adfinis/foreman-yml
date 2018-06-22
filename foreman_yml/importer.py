@@ -1030,17 +1030,17 @@ class ForemanImport(ForemanBase):
                 continue
             try:
                 as_id   = self.fm.users.show(user['login'])['id']
-                log.log(log.LOG_WARN, "User  {0} allready exists".format(user['login']))
+                log.log(log.LOG_WARN, "User {0} already exists".format(user['login']))
                 continue
             except TypeError:
                 pass
 
             # resolve auth source
-            if user['auth-source'] is not 'INTERNAL':
+            if user['auth-source'] != 'INTERNAL':
                 try:
                     as_id   = self.fm.auth_source_ldaps.show(user['auth-source'])['id']
                 except TypeError:
-                    log.log(log.LOG_ERROR, "Cannot resolve auth source '{0}' for user '{1}', skipping creation".format(user['login'], user['auth-source']))
+                    log.log(log.LOG_ERROR, "Cannot resolve auth source '{1}' for user '{0}', skipping creation".format(user['login'], user['auth-source']))
                     continue
                 del(user['auth-source'])
                 user['auth_source_id'] = as_id
