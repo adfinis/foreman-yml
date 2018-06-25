@@ -125,6 +125,7 @@ def main():
 
     if (function == "cleanup"):
         fm = ForemanCleanup(config)
+        fm.connect()
         fm_cleanup(fm)
 
     if (function == "legacy"):
