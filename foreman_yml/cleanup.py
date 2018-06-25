@@ -5,7 +5,6 @@ import log
 from base import ForemanBase
 from voluptuous import MultipleInvalid
 
-
 class ForemanCleanup(ForemanBase):
 
     def process_cleanup_arch(self):
@@ -105,7 +104,13 @@ class ForemanCleanup(ForemanBase):
                 if (ptc['name'] == pt['name']):
                     pt_deleted = True
                     log.log(log.LOG_INFO, "Delete Provisioning Template '{0}'".format(pt['name']))
-
+                    ptinfo = self.fm.provisioning_templates.show(pt['name'])
+                    if ptinfo['locked']:
+                        log.log(log.LOG_INFO, "Provisioning Template '{0}' is locked, unlock first".format(pt['name']))
+                        self.fm.provisioning_templates.update(
+                            { 'locked': False },
+                            ptinfo['id']
+                        )
                     self.fm.provisioning_templates.destroy( pt['name'] )
                     continue
             if not pt_deleted:
