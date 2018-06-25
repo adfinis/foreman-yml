@@ -5,8 +5,6 @@ import log
 from base import ForemanBase
 from voluptuous import MultipleInvalid
 
-from pprint import pprint
-
 class ForemanCleanup(ForemanBase):
 
     def process_cleanup_arch(self):
