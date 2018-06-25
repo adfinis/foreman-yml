@@ -1,6 +1,7 @@
 import sys
 import logging
 import log
+import urllib3
 from foreman.client import Foreman
 from validator import Validator
 
@@ -23,6 +24,7 @@ class ForemanBase:
 
     def connect(self):
         try:
+            urllib3.disable_warnings()
             logging.disable(logging.WARNING)
             self.fm = Foreman(self.config['auth']['url'], (self.config['auth']['user'], self.config['auth']['pass']), api_version=2, use_cache=False, strict_cache=False)
             # this is nescesary for detecting faulty credentials in yaml
