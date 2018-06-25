@@ -347,12 +347,13 @@ class ForemanImport(ForemanBase):
                     'locked':           pt['locked']
                 }
                 os_ids = []
-                for osc in pt['os']:
-                    try:
-                        os_id = self.fm.operatingsystems.show(osc['name'])['id']
-                        os_ids.append(os_id)
-                    except:
-                        log.log(log.LOG_WARN, "Cannot link OS '{0}' to Provisioning Template '{1}'".format(osc['name'],pt['name']))
+                if pt['os']:
+                  for osc in pt['os']:
+                      try:
+                          os_id = self.fm.operatingsystems.show(osc['name'])['id']
+                          os_ids.append(os_id)
+                      except:
+                          log.log(log.LOG_WARN, "Cannot link OS '{0}' to Provisioning Template '{1}'".format(osc['name'],pt['name']))
                 pt_tpl = {
                     'name':                 pt['name'],
                     'template':             pt['template'],
