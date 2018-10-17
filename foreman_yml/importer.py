@@ -368,6 +368,7 @@ class ForemanImport(ForemanBase):
 
 
     def process_template_combination_attribute(self):
+        log.log(log.LOG_INFO, "Processing Template Combination Attributes")
         ptlist = self.fm.provisioning_templates.index(per_page=99999)['results']
         envlist = self.fm.environments.index(per_page=99999)['results']
         for pt in self.get_config_section('provisioning-template'):
@@ -382,7 +383,7 @@ class ForemanImport(ForemanBase):
                 log.log(log.LOG_WARN, "Cannot resolve Provisioning template '{0}' ".format(pt['name']) )
                 continue
 
-            if 'template_combination_attribute' not in pt or pt['template-combination-attribute'] is None:
+            if 'template-combination-attribute' not in pt or pt['template-combination-attribute'] is None:
                 continue
             else:
                 linklist = pt['template-combination-attribute']
