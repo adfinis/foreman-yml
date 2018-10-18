@@ -77,14 +77,14 @@ def fm_import(fm):
     # enterprise edition only: ldap
     fm.process_auth_sources_ldap()
 
+    # roles
+    fm.process_roles()
+
     # users
     fm.process_config_user()
 
     # user groups
     fm.process_usergroups()
-
-    # roles
-    fm.process_roles()
 
 
 def main():
