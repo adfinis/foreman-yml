@@ -996,8 +996,6 @@ class ForemanImport(ForemanBase):
             except KeyError:
                 pass
 
-            pprint(fm_arr)
-
             try:
                 ug_id = self.fm.usergroups.create(usergroup=fm_arr)
             except:
