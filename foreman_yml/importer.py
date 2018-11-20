@@ -728,33 +728,37 @@ class ForemanImport(ForemanBase):
 
                 # get organization_id
                 log.log(log.LOG_DEBUG, "Get Organization")
-                try:
-                    organization = self.fm.organizations.show(hostc['organization'])
-                    log.log(log.LOG_DEBUG, "Dumping Organization Response")
-                    log.log(log.LOG_DEBUG, organization, True)
-                    if len(organization) > 0:
-                        organization_id = organization['id']
-                    else:
-                        log.log(log.LOG_INFO, "Organization %s not found. Searching organization with name" % hostc['organization'])
-                        organization_id = filterbyname(self.fm.organizations.index(per_page=99999), hostc['organization'])
-                except:
-                    log.log(log.LOG_ERROR, "Organization '{0}' does not exist".format(hostc['organization']))
-                    continue
+                organization_id = None
+                if hostc.get('organization'):
+                    try:
+                        organization = self.fm.organizations.show(hostc['organization'])
+                        log.log(log.LOG_DEBUG, "Dumping Organization Response")
+                        log.log(log.LOG_DEBUG, organization, True)
+                        if len(organization) > 0:
+                            organization_id = organization['id']
+                        else:
+                            log.log(log.LOG_INFO, "Organization %s not found. Searching organization with name" % hostc['organization'])
+                            organization_id = filterbyname(self.fm.organizations.index(per_page=99999), hostc['organization'])
+                    except:
+                        log.log(log.LOG_ERROR, "Organization '{0}' does not exist".format(hostc['organization']))
+                        continue
 
                 # get location_id
                 log.log(log.LOG_DEBUG, "Get Location")
-                try:
-                    location = self.fm.locations.show(hostc['location'])
-                    log.log(log.LOG_DEBUG, "Dumping Location Response")
-                    log.log(log.LOG_DEBUG, organization, True)
-                    if len(location) > 0:
-                        location_id = location['id']
-                    else:
-                        log.log(log.LOG_INFO, "Location %s not found. Searching location with name" % hostc['location'])
-                        location_id = filterbyname(self.fm.locations.index(per_page=99999), hostc['location'])
-                except:
-                    log.log(log.LOG_ERROR, "Location '{0}' does not exist".format(hostc['location']))
-                    continue
+                location_id = None
+                if hostc.get('location'):
+                    try:
+                        location = self.fm.locations.show(hostc['location'])
+                        log.log(log.LOG_DEBUG, "Dumping Location Response")
+                        log.log(log.LOG_DEBUG, organization, True)
+                        if len(location) > 0:
+                            location_id = location['id']
+                        else:
+                            log.log(log.LOG_INFO, "Location %s not found. Searching location with name" % hostc['location'])
+                            location_id = filterbyname(self.fm.locations.index(per_page=99999), hostc['location'])
+                    except:
+                        log.log(log.LOG_ERROR, "Location '{0}' does not exist".format(hostc['location']))
+                        continue
 
                 # build host_params array
                 host_params = []
@@ -770,7 +774,6 @@ class ForemanImport(ForemanBase):
                     'managed':              'true',
                     'build':                'true',
                     'name':                 hostc['name'],
-                    #'mac':                  hostc['mac'],
                     'domain_id':            domain_id,
                     'environment_id':       enviroment_id,
                     'architecture_id':      architecture_id,
@@ -779,15 +782,17 @@ class ForemanImport(ForemanBase):
                     'ptable_id':            parttable_id,
                     'model_id':             model_id,
                     'root_pass':            hostc['root-pass'],
-                    'organization_id':      organization_id,
-                    'location_id':          location_id
                 }
 
-                # try to get mac
-                try:
-                    hmac = hostc['mac']
-                except:
-                    pass
+                if organization_id:
+                    log.log(log.LOG_DEBUG, "Organization ID set")
+                    host_tpl['organization_id': organization_id]
+
+                if location_id:
+                    log.log(log.LOG_DEBUG, "Location ID set")
+                    host_tpl['location_id': location_id]
+
+                hmac = hostc.get('mac')
                 if hmac:
                     host_tpl['mac'] = hmac
 
