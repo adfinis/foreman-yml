@@ -91,7 +91,7 @@ class ForemanBase:
 
         # get audits of specified host
         for audit in all_audits:
-            if ( audit['auditable_type'] == 'Host') and (audit['auditable_id'] == host_id):
+            if (audit['auditable_type'] == 'Host::Base') and (audit['auditable_id'] == host_id):
                 host_audits.append(audit)
 
         # search for audit type audited_changes['build']
