@@ -107,7 +107,7 @@ def main():
 
     try:
         config_file = open(config_file, 'r')
-        config = yaml.load(config_file)
+        config = yaml.load(config_file, Loader=yaml.FullLoader)
         config_file.close()
     except:
         log.log(log.LOG_ERROR, "Failed to load/parse config")
