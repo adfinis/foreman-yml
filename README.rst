@@ -46,7 +46,7 @@ Dump current configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 foreman-yml supports dumping the whole configuration of a remote foreman
-instance to sdout. Use ``foreman-yml dump`` for this feauture.
+instance to stdout. Use ``foreman-yml dump`` for this feauture.
 
 For dumping, provide an config file with auth settings:
 
